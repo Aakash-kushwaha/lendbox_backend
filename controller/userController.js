@@ -48,12 +48,10 @@ const userRegisterEmailPass = async (req, res) => {
 
     let qualityCheck = await userModel.findOne({ email: email });
     if (qualityCheck)
-      return res
-        .status(400)
-        .json({
-          message: "Email Id already registered",
-          data: { userId: user._id },
-        });
+      return res.status(400).json({
+        message: "Email Id already registered",
+        data: { userId: user._id },
+      });
 
     let user = await userModel.findOne({ _id: userId });
     if (!user && user.mobile !== null) {
