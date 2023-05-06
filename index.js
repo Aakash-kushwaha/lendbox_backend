@@ -21,19 +21,12 @@ const url = "mongodb+srv://casper:Atlas123@cluster0.hztpe0f.mongodb.net/lendbox?
 
 // routes import
 const userRouter = require("./routes/authRoutes")
-const {userModel} = require("./models/userModel")
-
 
 app.get("/",async(req,res)=>{
-    let data =await userModel.find()
-    res.status(200).json({message:"welcome to the Lendbox api",data:data})
+    res.status(200).json({message:"welcome to the Lendbox api"})
 })
 
 app.use("/register",userRouter)
-
-//userId  64561c4a9dc3e3e3907b858b
-
-
 
 app.listen(port,()=>{
 
