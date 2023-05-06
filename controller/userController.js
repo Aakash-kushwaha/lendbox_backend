@@ -127,7 +127,7 @@ const userLogin = async (req, res) => {
 
     const token = createToken(user._id);
 
-    let activesession = await sessionModel.find();
+    let activesession = await sessionModel.find({userId:user._id});
     if (activesession.length >= 3) {
       return res
         .status(400)
