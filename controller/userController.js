@@ -120,6 +120,8 @@ const userLogin = async (req, res) => {
 
     if (!isValiPassword) return res.status(400).json("Invalid Password");
 
+    const token = createToken(user._id);
+
     let activesession = await sessionModel.find();
     if (activesession.length >= 3) {
       return res
