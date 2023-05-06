@@ -1,0 +1,228 @@
+{
+	"info": {
+		"_postman_id": "661a837f-9846-4c8b-b4fa-3d00193b23f8",
+		"name": "lendbox",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20187104"
+	},
+	"item": [
+		{
+			"name": "Deployed api",
+			"item": [
+				{
+					"name": "Register Step 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"aman\",\r\n    \"mobile\":3873943993\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployed}}register/mobile",
+							"host": [
+								"{{deployed}}register"
+							],
+							"path": [
+								"mobile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Step 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"mobile\": 3873943993,\r\n     \"email\":\"aman@gmail.com\",\r\n     \"password\":\"aman\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployed}}register/email",
+							"host": [
+								"{{deployed}}register"
+							],
+							"path": [
+								"email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Step 3",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mobile\": 3873943993,\r\n     \"email\":\"aman@gmail.com\",\r\n     \"DOB\":\"01-01-1999\",\r\n     \"PAN\":\"AM02312\",\r\n     \"father_Name\":\"Mr. Krishna\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployed}}register/details",
+							"host": [
+								"{{deployed}}register"
+							],
+							"path": [
+								"details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login with active sessions",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"aakash@gmail.com\",\r\n    \"password\":\"aakash\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployed}}register/login",
+							"host": [
+								"{{deployed}}register"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "localhost",
+			"item": [
+				{
+					"name": "Register Step 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mobile\":1234567890,\r\n    \"name\":\"lendbox\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}register/mobile",
+							"host": [
+								"{{localhost}}register"
+							],
+							"path": [
+								"mobile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Step 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mobile\":1234567890,\r\n    \"email\":\"lendbox@gmail.com\",\r\n    \"password\":\"lendbox\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}register/email",
+							"host": [
+								"{{localhost}}register"
+							],
+							"path": [
+								"email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Step 3",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mobile\":1234567890,\r\n    \"email\":\"lendbox@gmail.com\",\r\n    \"DOB\":\"2020\",\r\n    \"PAN\":\"LEND2020\",\r\n    \"father_Name\":\"lendbox\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}register/details",
+							"host": [
+								"{{localhost}}register"
+							],
+							"path": [
+								"details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login with active sessions",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"lendbox@gmail.com\",\r\n    \"password\":\"lendbox\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}register/login",
+							"host": [
+								"{{localhost}}register"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
