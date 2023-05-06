@@ -1,4 +1,9 @@
-const { userModel, sessionModel } = require("../models/userModel");
+const {
+  sessionModel,
+  Step1Registration,
+  Step2Registration,
+  Step3Registration,
+} = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
@@ -14,23 +19,19 @@ const userRegister = async (req, res) => {
   const { mobile, name } = req.body;
 
   try {
-    let user = await userModel.findOne({ mobile });
-    console.log(user);
+    if (!mobile || !name)
+      return res.status(400).json({ message: "All fields are required" });
+    let user = await Step1Registration.findOne({ mobile });
     if (user)
       return res.status(400).json({
         message: "User already exists....",
         data: { userId: user._id },
       });
-
-    if (!mobile || !name)
-      return res.status(400).json({ message: "All fields are required" });
-
-    user = new userModel({ mobile, name });
-
+    user = new Step1Registration({ mobile, name });
     await user.save();
+
     res.status(200).json({
-      message: "success",
-      userId: user._id,
+      message: "Mobile and name registered successfully",
       mobile,
     });
   } catch (err) {
@@ -40,35 +41,34 @@ const userRegister = async (req, res) => {
 };
 
 const userRegisterEmailPass = async (req, res) => {
-  const { userId, email, password } = req.body;
-
   try {
-    if (!userId || !email || !password)
-      return res.status(400).json({ message: "All fields are required" });
-
-    let qualityCheck = await userModel.findOne({ email: email });
-    if (qualityCheck)
-      return res.status(400).json({
-        message: "Email Id already registered"
-      });
-
-    let user = await userModel.findOne({ _id: userId });
-    if (!user && user.mobile !== null) {
-      return res.status(400).json({ message: "User doesn't exists...." });
-    } else {
-      const salt = await bcrypt.genSalt(10);
-      user.email = email;
-      const hashPassword = await bcrypt.hash(password, salt);
-      user.password = hashPassword;
-
-      await user.save();
-
-      res.status(200).json({
-        message: "success",
-        userId: user._id,
-        email,
-      });
+    const { mobile, email, password } = req.body;
+    if (!mobile || !email || !password)
+      return res.status(400).json({ message: "All credentials required" });
+    if (!validator.isEmail(email))
+      return res.status(400).json("Email must be valid");
+    const existingRegistration = await Step1Registration.findOne({ mobile });
+    if (!existingRegistration) {
+      return res.status(404).json({ message: "Mobile number not found" });
     }
+    const existingStep2Registration = await Step2Registration.findOne({
+      mobile,
+    });
+    if (existingStep2Registration) {
+      return res.status(409).json({ message: "Email already registered" });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt);
+    const step2Registration = new Step2Registration({
+      mobile,
+      email,
+      password: hashPassword,
+    });
+    const savedRegistration = await step2Registration.save();
+    res.status(201).json({
+      message: "Email registered successfully",
+      registration: savedRegistration,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
@@ -76,29 +76,36 @@ const userRegisterEmailPass = async (req, res) => {
 };
 
 const userRegisterDetails = async (req, res) => {
-  const { userId, PAN, fathers_Name, DOB } = req.body;
-
   try {
-    if (!userId || !PAN || !fathers_Name || !DOB)
-      return res.status(400).json("All fields are required");
-
-    let user = await userModel.findOne({ _id: userId });
-    console.log(user);
-
-    if (!user && user.email !== null) {
-      return res.status(400).json({ message: "User doesn't exists...." });
-    } else {
-      user.fathers_Name = fathers_Name;
-      user.DOB = DOB;
-      user.PAN = PAN;
-
-      await user.save();
-      res.status(200).json({
-        message: "success",
-        userId: user._id,
-        PAN,
-      });
+    const { mobile, email, PAN, father_Name, DOB } = req.body;
+    if (!mobile || !email || !PAN || !father_Name || !DOB)
+      return res.status(400).json({ message: "All credentials required" });
+    const existingStep2Registration = await Step2Registration.findOne({
+      mobile,
+      email,
+    });
+    if (!existingStep2Registration) {
+      return res.status(404).json({ message: "Email not found" });
     }
+    const existingStep3Registration = await Step3Registration.findOne({
+      mobile,
+      email,
+    });
+    if (existingStep3Registration) {
+      return res.status(409).json({ message: "Details already registered" });
+    }
+    const step3Registration = new Step3Registration({
+      mobile,
+      email,
+      PAN,
+      father_Name,
+      DOB,
+    });
+    const savedRegistration = await step3Registration.save();
+    res.status(201).json({
+      message: "Details registered successfully",
+      registration: savedRegistration,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
@@ -112,13 +119,11 @@ const userLogin = async (req, res) => {
     if (!email || !password)
       return res.status(400).json("All fields are required");
 
-    let user = await userModel.findOne({ email });
-
-    if (!user) return res.status(400).json("User not found");
-
+    let user = await Step2Registration.findOne({ email });
     const isValiPassword = await bcrypt.compare(password, user.password);
 
-    if (!isValiPassword) return res.status(400).json("Invalid Password");
+    if (!user || !isValiPassword)
+      return res.status(400).json({ message: "Invalid Email or Password" });
 
     const token = createToken(user._id);
 
@@ -126,13 +131,13 @@ const userLogin = async (req, res) => {
     if (activesession.length >= 3) {
       return res
         .status(400)
-        .json({ message: "Found active session more than 3 " });
-    } else {
-      let Session = new sessionModel({
-        userId: user._id,
-      });
-      await Session.save();
+        .json({ message: "Found more than 3 active session" });
     }
+
+    let Session = new sessionModel({
+      userId: user._id,
+    });
+    await Session.save();
 
     res.status(200).json({
       _id: user._id,
