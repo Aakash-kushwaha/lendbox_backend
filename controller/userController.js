@@ -49,8 +49,7 @@ const userRegisterEmailPass = async (req, res) => {
     let qualityCheck = await userModel.findOne({ email: email });
     if (qualityCheck)
       return res.status(400).json({
-        message: "Email Id already registered",
-        data: { userId: user._id },
+        message: "Email Id already registered"
       });
 
     let user = await userModel.findOne({ _id: userId });
@@ -121,10 +120,8 @@ const userLogin = async (req, res) => {
 
     if (!isValiPassword) return res.status(400).json("Invalid Password");
 
-    const token = createToken(user._id);
-
     let activesession = await sessionModel.find();
-    if (activesession.length > 3) {
+    if (activesession.length >= 3) {
       return res
         .status(400)
         .json({ message: "Found active session more than 3 " });
