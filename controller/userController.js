@@ -43,6 +43,8 @@ const userRegister = async (req, res) => {
 const userRegisterEmailPass = async (req, res) => {
   try {
     const { mobile, email, password } = req.body;
+    // mobile must be sent from frontend in body in order to make relationship
+
     if (!mobile || !email || !password)
       return res.status(400).json({ message: "All credentials required" });
     if (!validator.isEmail(email))
@@ -78,6 +80,8 @@ const userRegisterEmailPass = async (req, res) => {
 const userRegisterDetails = async (req, res) => {
   try {
     const { mobile, email, PAN, father_Name, DOB } = req.body;
+    // mobile & email must be sent from frontend in body in order to make relationship
+    
     if (!mobile || !email || !PAN || !father_Name || !DOB)
       return res.status(400).json({ message: "All credentials required" });
     const existingStep2Registration = await Step2Registration.findOne({
@@ -127,7 +131,7 @@ const userLogin = async (req, res) => {
 
     const token = createToken(user._id);
 
-    let activesession = await sessionModel.find({userId:user._id});
+    let activesession = await sessionModel.find({ userId: user._id });
     if (activesession.length >= 3) {
       return res
         .status(400)
